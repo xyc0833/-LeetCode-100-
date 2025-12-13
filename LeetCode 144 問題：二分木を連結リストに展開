@@ -1,0 +1,43 @@
+// LeetCode 144 問題：二分木を連結リストに展開
+// 再帰を採用したシンプルなアプローチ
+
+// 問題文の要求：元の木の構造を変更する必要がある
+class Solution {
+public:
+    // メイン関数：二分木を単方向連結リスト（前順巡回順序）に展開
+    void flatten(TreeNode* root) {
+        // 再帰終了条件：空ノードは即時リターン
+        if(root == nullptr) return;
+        
+        // 前順巡回ノード列を保存するポインタ配列
+        vector<TreeNode*> res;
+        // 前順巡回を実行して配列を埋める
+        Trivalse(root, res);
+        
+        // ルートノードからリスト再構築開始
+        TreeNode* cur = root;
+        // 保存されたノード列を走査（2番目のノードから）
+        for(int i = 1; i < res.size(); i++) {
+            // 現在のノードの右ポインタを次ノードに設定
+            cur->right = res[i];
+            // 左ポインタは明示的にnullに設定（問題文要求）
+            cur->left = nullptr;
+            // 次の処理ノードに移動
+            cur = cur->right;
+        }
+    }
+    
+    // 補助関数：前順巡回を実行してノードポインタを収集
+    void Trivalse(TreeNode* root, vector<TreeNode*>& res) {
+        // 再帰終了条件：空ノードは即時リターン
+        if(root == nullptr) return;
+        
+        // 前順巡回の核心ロジック：根→左→右
+        // 1. 現在のノードを訪問
+        res.push_back(root);
+        // 2. 左部分木を再帰的に巡回
+        Trivalse(root->left, res);
+        // 3. 右部分木を再帰的に巡回
+        Trivalse(root->right, res);
+    }
+};
