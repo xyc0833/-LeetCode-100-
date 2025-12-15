@@ -1,0 +1,76 @@
+leetcode 437 
+
+437. パスの和 III (Path Sum III)
+
+問題説明
+二叉木のルートノード root と整数 targetSum が与えられます。二叉木中に存在する すべてのパス のうち、パス上のノード値の合計が targetSum に等しいものの個数を返してください。
+
+パスの定義：
+
+パスは、任意のノードから任意のノード までの連続するノードの列とします。
+パスは同じノードを複数回含んではいけません。
+パスの方向は、親 → 子の方向に限りません（子 → 親の方向も可能）。
+
+/**
+ * B站大佬の解法
+ * 1. すべてのパスの起点を列挙する
+ *    広度優先探索（BFS）を使用
+ * 2. あるノードを起点とする、条件を満たすパスの個数を計算する
+ *    深さ優先探索（DFS）を使用
+ */
+class Solution {
+public:
+    int pathSum(TreeNode* root, int targetSum) {
+        // 空の木の場合は0を返す
+        if(root == nullptr) return 0;
+        
+        // キューを使用して二叉木のレベルオーダー遍歴（BFS）
+        // すべてのパスの起点を列挙する
+        queue<TreeNode*> st;
+        st.push(root);
+        int count = 0;  // 条件を満たすパスの総数
+        
+        while(st.size() != 0){
+            TreeNode* node = st.front();
+            st.pop();
+            
+            // 現在のノードを起点とするDFSを実行し、有効なパス数を加算
+            count = count + dfs(node, 0, targetSum);
+            
+            // 子ノードをキューに追加
+            if(node->left != nullptr) st.push(node->left);
+            if(node->right != nullptr) st.push(node->right); 
+        }
+        return count;
+    }
+
+private:
+    // 深さ優先探索（DFS）の補助関数
+    // パラメータ：root-現在のノード, curSum-現在のパスの累計和, targetSum-目標値
+    int dfs(TreeNode* root, long long curSum, int targetSum){
+        // 終了条件：空ノード
+        if(root == nullptr) return 0;
+        
+        // 現在のパス和を更新（long long型を使用してオーバーフロー防止）
+        curSum += root->val;
+        int count = 0;  // 現在のノードで生成される有効パス数
+        
+        // 現在のパスが条件を満たしているかチェック
+        if(curSum == targetSum) count++;
+        
+        // 左子木と右子木を再帰的に処理
+        if(root->left != nullptr) count += dfs(root->left, curSum, targetSum);
+        if(root->right != nullptr) count += dfs(root->right, curSum, targetSum);
+        
+        return count;
+    }
+};
+
+パス（Path）：二叉树中从某节点到某节点的连续边序列
+起点（起点）：パスの開始ノード
+広度優先探索（BFS）：Breadth-First Search（キューを使用）
+深さ優先探索（DFS）：Depth-First Search（再帰を使用）
+累計和（累計和）：パス上のノード値の合計
+オーバーフロー防止（オーバーフロー防止）：整数範囲超過の防止
+終了条件（終了条件）：再帰の停止条件
+再帰的（再帰的）：recursive
