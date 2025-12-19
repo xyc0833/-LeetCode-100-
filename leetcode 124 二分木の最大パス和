@@ -1,0 +1,41 @@
+/**
+ * 二分木のノード定義
+ * struct TreeNode {
+ *     int val;           // ノードの値
+ *     TreeNode *left;    // 左の子ノード
+ *     TreeNode *right;   // 右の子ノード
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    int maxPathSum(TreeNode* root) {
+        int res = root->val; // 初期値を根ノードの値で設定
+        dfs(root, res);      // DFSで最大パス和を探索
+        return res;          // 結果を返却
+    }
+    
+    // DFS関数（最大パス和を計算する）
+    int dfs(TreeNode* root, int& res) {
+        // 葉ノードの場合は0を返却
+        if (root == nullptr) return 0;
+        
+        // 左部分木の最大和を計算（負の場合は0に切り捨て）
+        // ノードの和が負になる可能性があるため、0とのmaxを取る
+        int leftmax = max(0, dfs(root->left, res));
+        
+        // 右部分木の最大和を計算（負の場合は0に切り捨て）
+        int rightmax = max(0, dfs(root->right, res));
+        
+        // 現在のノードを根とするパスの最大和を更新
+        // 「左部分木 + 右部分木 + ノード自身」の値で更新を試行
+        res = max(res, leftmax + rightmax + root->val);
+        
+        // 親ノードに返却する値：
+        // 「現在のノード + 左右の部分木のうち大きい方」
+        // 親ノードでのパスに使用可能な最大値を返却
+        return root->val + max(leftmax, rightmax);
+    }
+};
