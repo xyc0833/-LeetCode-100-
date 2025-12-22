@@ -1,0 +1,37 @@
+leetcode 797  全ての可能な経路
+
+class Solution {
+private:
+    vector<vector<int>> result; // 条件を満たす経路を収集する
+    vector<int> path; // ノード0から終点までの経路
+    // x: 現在探索中のノード
+    // graph: 現在のグラフを格納
+    // 1. パラメータの決定
+    void dfs(vector<vector<int>>& graph, int x) {
+        // 2. 終了条件の決定
+        if (x == graph.size() - 1) {
+            result.push_back(path); // 終点に到達したら経路をresultに追加
+            return;
+        }
+        // ノードxに接続されている全てのノードを遍歴
+        for (int i = 0; i < graph[x].size(); i++) {
+            // 探索したノードを経路に追加
+            path.push_back(graph[x][i]);
+            dfs(graph, graph[x][i]); // 次のレベルの再帰呼び出し
+            path.pop_back(); // バックトラック: 本ノードを経路から削除
+        }
+    }
+public:
+    vector<vector<int>> allPathsSourceTarget(vector<vector<int>>& graph) {
+        path.push_back(0); // どの経路もノード0からスタートする
+        dfs(graph, 0);
+        return result;
+    }
+};
+
+符合条件的路径	条件を満たす経路	Valid paths
+终止条件	終了条件	Termination condition
+遍历	遍歴 / 探索	Traverse
+结点	ノード	Node
+回溯	バックトラック	Backtrack
+递归	再帰	Recursion
