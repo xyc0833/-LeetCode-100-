@@ -1,0 +1,76 @@
+leetcode 200. 島の数（Number of Islands） 幅優先探索（BFS）
+解法：幅優先探索（BFS）
+
+#include<bits/stdc++.h>
+using namespace std;
+
+// 4方向移動用配列（上、左、下、右）
+int dir[4][2] = {-1,0, 0,-1, 1,0, 0,1};
+
+// BFS関数
+void bfs(vector<vector<int>>& grid, vector<vector<bool>>& visited, int x, int y) {
+    // キューを宣言（pair<int,int>型）
+    queue<pair<int,int>> que;
+    que.push({x,y}); // スタート位置をキューに追加
+    visited[x][y] = true; // 訪問済みフラグを立てる
+
+    // キューが空になるまで繰り返す
+    while(que.size() != 0) {
+        pair<int,int> cur = que.front(); que.pop(); // キューの先頭を取り出し
+        int x = cur.first;
+        int y = cur.second;
+
+        // 4方向探索
+        for(int i=0; i<4; i++) {
+            int nextx = x + dir[i][0]; // 次のx座標
+            int nexty = y + dir[i][1]; // 次のy座標
+
+            // グリッド外の場合はスキップ
+            if(nextx < 0 || nextx >= grid.size() || nexty < 0 || nexty >= grid[0].size()) continue;
+
+            // 未訪問且つ陸地（1）の場合
+            if(visited[nextx][nexty] == false && grid[nextx][nexty] == 1) {
+                que.push({nextx,nexty}); // キューに追加
+                visited[nextx][nexty] = true; // 訪問済みフラグを立てる
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m; // グリッドの行数と列数
+    vector<vector<int>> grid(n, vector<int>(m, 0)); // グリッド（0:海, 1:陸地）
+
+    // グリッド入力
+    for(int i=0; i<n; i++) {
+        for(int j=0; j<m; j++) {
+            cin >> grid[i][j];
+        }
+    }
+
+    vector<vector<bool>> visited(n, vector<bool>(m, false)); // 訪問済みフラグ
+    int result = 0; // 島の数
+
+    // 全マスを探索
+    for(int i=0; i<n; i++) {
+        for(int j=0; j<m; j++) {
+            // 陸地且つ未訪問の場合
+            if(grid[i][j] == 1 && visited[i][j] == false) {
+                result++; // 島の数を増やす
+                bfs(grid, visited, i, j); // BFSで連結陸地を探索
+            }
+        }
+    }
+
+    cout << result << endl; // 結果出力
+}
+
+BFS	幅優先探索	グラフ/グリッドの探索アルゴリズム
+Queue	キュー	FIFO（先入先出）データ構造
+Grid	グリッド	二次元配列（地図）
+Visited flag	訪問済みフラグ	探索済みのマスを記録
+Connected component	連結成分	連続した陸地の集合
+Land (1)	陸地（1）	グリッド中の1の値
+Sea (0)	海（0）	グリッド中の0の値
+}
