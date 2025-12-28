@@ -1,0 +1,86 @@
+99. 島の数をカウントする問題
+問題説明
+与えられた行列（行列の要素は 1（陸地）と 0（水）で構成）から、島の数を計算してください。
+島は、水平方向または垂直方向に隣接する陸地が連結して形成され、周囲はすべて水域で囲まれています。行列の外側はすべて水で囲まれていると仮定してください。
+
+入力説明
+
+1 行目には 2 つの整数 
+N,M
+ が与えられ、行列の行数と列数を表します。
+続く 
+N
+ 行には、各行 
+M
+ 個の数字（1 または 0）が与えられます。
+出力説明
+
+島の数を表す整数を出力してください。島が存在しない場合は 0 を出力してください。
+入力例
+
+4 5  
+1 1 0 0 0  
+1 1 0 0 0  
+0 0 1 0 0  
+0 0 0 1 1
+
+出力例
+3
+解説（日文）
+この問題は、深さ優先探索（DFS） または 幅優先探索（BFS） を用いて解くことができます。
+
+アルゴリズムの流れ
+行列を走査：各セルを順番にチェックします。
+陸地（1）を発見したら：
+島の数を 1 増やします。
+DFS/BFS を用いて、その陸地に隣接するすべての陸地を探索し、訪問済み としてマークします。
+水（0）または訪問済みの陸地はスキップ：既に探索済みの部分は再びカウントしないようにします。
+
+
+#include <bits/stdc++.h>
+using namespace std;
+// 1 まずパラメータを決定する
+int dir[4][2] = {0, 1, 1, 0, 0, -1, -1, 0}; 
+void dfs(
+    vector<vector<int>> & grid, vector<vector<bool>> &visited, int x, int y) {
+  // 2 終了条件を確認：海洋(0)または既に訪問済みの場合は即座に終了
+  if (grid[x][y] == 0 || visited[x][y] == true)
+    return;
+  // 訪問済みノードをtrueにマークする必要があります
+  visited[x][y] = true;
+  // 3 単一レベルのループ操作：上下左右の4方向を探索
+  for (int i = 0; i < 4; i++) {
+    int nextx = x + dir[i][0];
+    int nexty = y + dir[i][1];
+    // ループ内で境界条件を処理
+    if (nextx < 0 || nextx >= grid.size() || nexty < 0 ||
+        nexty >= grid[0].size()) {
+      continue;
+    }
+    dfs(grid, visited, nextx, nexty);
+  }
+}
+int main() {
+  int n, m;
+  cin >> n >> m;
+
+  vector<vector<int>> grid(n, vector<int>(m, 0));
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < m; j++) {
+      cin >> grid[i][j];
+    }
+  }
+  // visited配列を定義する必要があります
+  vector<vector<bool>> visited(n, vector<bool>(m, false));
+  int result = 0;
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < m; j++) {
+      // 陸地(1)で未訪問の場合はdfsに投入
+      if (grid[i][j] == 1 && visited[i][j] == false) {
+        result++;
+        dfs(grid,visited,i,j);
+      }
+    }
+  }
+  cout<<result<<endl;
+}
