@@ -1,0 +1,42 @@
+class Solution {
+public:
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        // どのデータ構造を使ってマッピング関係を保存するか？
+        // 入次数（indegree）を記録する配列が必要
+        // マッピング関係を保存するmapが必要
+        // 入次数が0のノードをマッピング関係から取り除くためのキューが必要
+        vector<int> indegree(numCourses, 0); // 入次数を記録する配列、初期値は0
+        vector<int> result; // 結果を保存する配列
+        // ここでどのように保存するか？やはりvectorを使う
+        unordered_map<int, vector<int>> umap;
+        vector<int> cur; // 現在のprerequisitesを取り出すための一時変数
+        for (auto cur : prerequisites) {
+            int x = cur[0]; // コースx
+            int y = cur[1]; // コースxの前提コースy
+            indegree[y]++; // yの入次数を増やす
+            umap[x].push_back(y); // xの前提コースとしてyを追加
+        }
+        queue<int> que; // キューを作成
+        for (int i = 0; i < numCourses; i++) {
+            if (indegree[i] == 0) que.push(i); // 入次数が0のコースをキューに追加
+        }
+        // 終了条件はキューが空でないこと
+        while (!que.empty()) {
+            int k = que.front();
+            que.pop();
+            result.push_back(k);
+            vector<int> abc = umap[k];
+            if (!abc.empty()) {
+                for (int i = 0; i < abc.size(); i++) {
+                    indegree[abc[i]]--; // 入次数を減らす
+                    if (indegree[abc[i]] == 0) que.push(abc[i]); // 入次数が0になったらキューに追加
+                }
+            }
+        }
+        cout << result.size();
+        if (result.size() == numCourses) return true; // 全コースを修了可能ならtrue
+
+        // 最終的にresult配列のサイズがnumCoursesと等しいかどうかで判断
+        return false;
+    }
+};
