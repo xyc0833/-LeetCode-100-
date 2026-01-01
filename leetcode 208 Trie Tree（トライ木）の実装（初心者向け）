@@ -1,0 +1,47 @@
+//Trie Tree（トライ木）の実装（初心者向け）
+// Trie（トライ木）は、26分岐の木構造と考えることができる（アルファベット小文字の場合）
+class Trie {
+private:
+    bool isEnd; // このノードが単語の終わりかどうかを示す
+    Trie* next[26]; // 子ノードへのポインタ配列（a~zに対応）
+
+public:
+    // コンストラクタ（初期化）
+    Trie() {
+        isEnd = false; // 初期状態は単語の終わりではない
+        memset(next, 0, sizeof(next)); // next配列をnullptr（0）で初期化
+    }
+
+    // 単語の挿入
+    void insert(string word) {
+        Trie* node = this; // ルートノードから開始
+        for (char c : word) {
+            // 対応する子ノードが存在しない場合、新規にノードを作成
+            if (node->next[c - 'a'] == nullptr) {
+                node->next[c - 'a'] = new Trie();
+            }
+            node = node->next[c - 'a']; // 子ノードに移動
+        }
+        node->isEnd = true; // 単語の終わりであることをマーク
+    }
+
+    // 単語の検索（完全一致）
+    bool search(string word) {
+        Trie* node = this; // ルートノードから開始
+        for (char c : word) {
+            node = node->next[c - 'a']; // 子ノードに移動
+            if (node == nullptr) return false; // 途中でノードがない場合はfalse
+        }
+        return node->isEnd; // 最終ノードが単語の終わりかどうかを返す
+    }
+
+    // 接頭辞（prefix）の検索
+    bool startsWith(string prefix) {
+        Trie* node = this; // ルートノードから開始
+        for (char c : prefix) {
+            node = node->next[c - 'a']; // 子ノードに移動
+            if (node == nullptr) return false; // 途中でノードがない場合はfalse
+        }
+        return true; // 接頭辞が存在する場合はtrue
+    }
+};
