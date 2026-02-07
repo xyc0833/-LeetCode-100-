@@ -1,3 +1,70 @@
+//最终参考学习的写法 自己容易理解的写法
+#include<bits/stdc++.h>
+using namespace std;
+
+//学习写外置函数的写法
+string leftShift(const string& t,long long p ){
+//&取地址符保证直接操作原字符串提高效率
+//const 保证是常量 保证字符串在函数内不被修改
+    if(t.empty() || p<=0){
+        return t;
+    }
+    long long len = t.size();
+    //取模避免p超过长度
+    long long shift = p % len;
+    string front = t.substr(0,shift);
+    string back = t.substr(shift);
+    return back + front;
+}
+
+int main(){
+    //加速输入输出的 方法 
+    ios::sync_with_stdio(false);
+    //解除 C++ 标准流（cin/cout）和 C 标准流（scanf/printf）的同步关系。
+    cin.tie(nullptr);
+    //解除 cin 和 cout 的绑定关系
+    //tie() 函数的作用是将一个流绑定到另一个流
+    int n;
+    cin>>n;
+    while(n--){
+        string s;
+        cin>>s;
+        string t = "";
+        //改用long long 避免数字溢出
+        long long p = 0;
+        for(auto c: s){
+            //处理数字字符
+            //isdigit(c)
+            if(c>='0' && c<='9'){
+                int x = c -'0';
+                if(p == 0){
+                    p = x;
+                }else{
+                    p = 10*p +x;
+                }
+            }
+            //处理字符
+            if((c>='A' && c<='Z') || (c>='a' && c<='z')){
+                //第一步 执行左移操作
+                t = leftShift(t,p);
+                //第二步 重置p为0
+                p = 0;
+                //第三步 处理字符
+                if(c == 'R'){
+                    reverse(t.begin(),t.end());
+                }else{
+                    t = t+c;//追加字符
+                    //t.push_back(c);
+                }
+            }
+        }
+        cout<<t<<endl;
+    }
+
+
+    return 0;
+}
+
 //豆包给的答案
 
 #include <iostream>
